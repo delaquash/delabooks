@@ -9,6 +9,11 @@ interface IUserRequest extends Request {
     };
   }
 
+  interface JWTPayload {
+    userId: string;
+    iat?: number;
+    exp?: number;
+}
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
@@ -29,8 +34,17 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!)
-        req.user = decoded;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
+
+        // find user
+        const user = await User.findById(decoded.userId).select("-password")
+        if (!user) {
+            return res.status(401).json({ 
+                message: 'User not found, access denied!!!' 
+            });
+        }
+        // Check if user is admin
+        req.user = user;
 
         next()
     } catch (error) {
