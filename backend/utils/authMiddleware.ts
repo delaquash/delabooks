@@ -2,6 +2,13 @@ import { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from "jsonwebtoken";
 import User from "../Model/User";
 
+interface IUserRequest extends Request {
+    user?: {
+      _id: string;
+      isAdmin: boolean;
+    };
+  }
+
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;
@@ -35,10 +42,32 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 }
 
 export default authMiddleware;
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    if (req.user && req.user.isAdmin) {
+export const isAdmin = (req: IUserRequest, res: Response, next: NextFunction) => {
+    try {
+        // Check if user exists in request
+        if (!req.user) {
+            return res.status(401).json({ 
+                success: false,
+                message: 'Authentication required',
+                error: 'No user found in request'
+            });
+        }
+
+        // Check if user is admin
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ 
+                success: false,
+                message: 'Access denied, admin only',
+                error: 'User does not have admin privileges'
+            });
+        }
+
         next();
-    } else {
-        return res.status(403).json({ message: 'Access denied, admin only' });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while checking admin status',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
     }
-}
+};
