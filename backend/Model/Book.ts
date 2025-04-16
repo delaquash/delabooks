@@ -1,6 +1,14 @@
-import mongoose  from "mongoose";
+import mongoose, { Types }  from "mongoose";
 
-
+interface IBookSchema {
+    title: String;
+    caption: String;
+    description: String;
+    rating: Number;
+    price: Number;
+    image: String;
+    user: Types.ObjectId;
+}
 const BookSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -37,3 +45,7 @@ const BookSchema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+const Books = mongoose.model<IBookSchema>("Books", BookSchema);
+
+export default Books
