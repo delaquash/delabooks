@@ -1,12 +1,12 @@
 import mongoose, { Types }  from "mongoose";
 
-interface IBookSchema {
-    title: String;
-    caption: String;
-    description: String;
-    rating: Number;
-    price: Number;
-    image: String;
+export interface IBookSchema {
+    title: string;
+    caption: string;
+    description: string;
+    rating: number;
+    price: number;
+    image: string;
     user: Types.ObjectId;
 }
 const BookSchema = new mongoose.Schema({
