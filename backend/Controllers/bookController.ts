@@ -83,6 +83,44 @@ export const getBookUser = async(req: Request, res: Response, next: NextFunction
     }
 }
 
+
+export const editBooks = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { caption, description, image, price, rating, title} = req.body as IBookSchema
+        // find the book by id
+        const bookID = req.params.id;
+
+        // find the user
+        const userID = req.user?._id
+        if(!userID) res.status(404).json({ message: 'User not found' });
+
+        // fnd the book in the db with bookID
+        const book = await Books.findById(bookID)
+        if (!book) res.status(404).json({ message: 'Book not found' });
+
+        // check if the user has permission to edit the book
+        if(book?.user.toString() !== userID.toString()) res.status(401).json({ message: 'Unauthorized' });
+
+        // delete and upload to cloudinary
+        if(image && image !== book?.image && book?.image.includes("cloudinary")) {
+            // extract the public id from the image url
+            const imagePublicId = book?.image.split("/").pop()?.split(".")[0]
+            // delete the image from cloudinary
+            await cloudinary.uploader.destroy(imagePublicId!) 
+            // upload the new image to cloudinary
+            const uploadResponse = await cloudinary.uploader.upload(image)
+
+            // update the image url
+            book.image = uploadResponse.secure_url
+        }
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Something went wrong' });
+        
+    }
+}
+
 export const deleteBooks = async(req: Request, res: Response, next: NextFunction) => {
     try {
         // first you get the book by ID
