@@ -22,7 +22,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
              res.status(401).json({ 
                 message: 'No token provided, access denied!!!' 
             });
-            return;
+
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
@@ -33,7 +33,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
              res.status(401).json({ 
                 message: 'User not found, access denied!!!' 
             });
-            return;
+
         }
         // Check if user is admin
         req.user = user;
