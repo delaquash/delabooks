@@ -72,6 +72,17 @@ export const getBooks = async(req: Request, res: Response, next: NextFunction) =
     }
 }
 
+export const getBookUser = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user?._id
+        const bookUser = await Books.find({ user }).sort({ createdAt: -1 })
+        res.status(200).json({ bookUser })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+}
+
 export const deleteBooks = async(req: Request, res: Response, next: NextFunction) => {
     try {
         // first you get the book by ID
