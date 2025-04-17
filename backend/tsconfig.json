@@ -10,5 +10,5 @@
     "moduleResolution": "node"  // Added this which may help with your import issue
   },
 
-  "include": ["types", "backend/**/*.ts"]
+  "include": ["types", "backend/**/*.ts", "types/global.d.ts"]
 }

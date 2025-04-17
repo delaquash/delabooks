@@ -10,7 +10,6 @@ export interface IBookSchema {
     user: Types.ObjectId;
 }
 
-
 export interface IUSER {
   username: string;
   password: string;

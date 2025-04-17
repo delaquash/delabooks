@@ -1,14 +1,7 @@
 import mongoose, { Types }  from "mongoose";
+import { IBookSchema } from "../types/types";
 
-export interface IBookSchema {
-    title: string;
-    caption: string;
-    description: string;
-    rating: number;
-    price: number;
-    image: string;
-    user: Types.ObjectId;
-}
+
 const BookSchema = new mongoose.Schema({
     title: {
         type: String,

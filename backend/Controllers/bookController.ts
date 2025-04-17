@@ -1,6 +1,7 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
-import Books, { IBookSchema } from '../Model/Book';
+import { NextFunction, Request, Response } from 'express';
 import cloudinary from '../utils/cloudinary';
+import { IBookSchema } from '../types/types';
+import Books from '../Model/Book';
 
 declare global {
     namespace Express {
@@ -29,7 +30,7 @@ export const RegNewBook = async (req: Request, res: Response) => {
             rating,
             description,
             image: imageUrl,
-            user: req.user._id
+            user: req.user?._id
         })
 
         await newBook.save()
