@@ -1,19 +1,8 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from "jsonwebtoken";
 import User from "../Model/User";
+import { JWTPayload, IUserRequest } from "../types/types"
 
-interface IUserRequest extends Request {
-    user?: {
-      _id: string;
-      isAdmin: boolean;
-    };
-  }
-
-  interface JWTPayload {
-    userId: string;
-    iat?: number;
-    exp?: number;
-}
 const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const authHeader = req.headers.authorization;

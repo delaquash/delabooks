@@ -1,6 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
-import User, { IUSER } from '../Model/User';
+import User from '../Model/User';
 import generateToken from '../utils/GenerateToken';
+import { IUSER } from '../types/types';
 
 /*************  ✨ Windsurf Command ⭐  *************/
 /**

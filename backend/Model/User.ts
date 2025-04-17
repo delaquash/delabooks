@@ -1,13 +1,6 @@
 import  mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-
-export interface IUSER {
-    username: string;
-    password: string;
-    email: string;
-    profileImage: string;
-    comparePassword(candidatePassword: string): Promise<boolean>;
-}
+import { IUSER } from "../types/types";
 
 const UserSchema = new mongoose.Schema ({
     username: {
