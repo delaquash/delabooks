@@ -3,6 +3,7 @@ dotenv.config();
 import express from "express";
 import authRoute from "./Routes/authRoute";
 import { connectDB } from "./config/db";
+import errorHandler from './utils/errorHandler';
 
 
 const app = express();
@@ -15,6 +16,10 @@ app.use("/api/v1/auth", authRoute);
 app.get("/", (req, res) => {
     res.send("Hello World!")
 })
+
+// Error handling middleware should be last
+app.use(errorHandler);
+
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`);
     connectDB()

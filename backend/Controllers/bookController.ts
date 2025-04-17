@@ -84,42 +84,74 @@ export const getBookUser = async(req: Request, res: Response, next: NextFunction
 }
 
 
-export const editBooks = async(req: Request, res: Response, next: NextFunction) => {
+export const editBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { caption, description, image, price, rating, title} = req.body as IBookSchema
-        // find the book by id
-        const bookID = req.params.id;
-
-        // find the user
-        const userID = req.user?._id
-        if(!userID) res.status(404).json({ message: 'User not found' });
-
-        // fnd the book in the db with bookID
-        const book = await Books.findById(bookID)
-        if (!book) res.status(404).json({ message: 'Book not found' });
-
-        // check if the user has permission to edit the book
-        if(book?.user.toString() !== userID.toString()) res.status(401).json({ message: 'Unauthorized' });
-
-        // delete and upload to cloudinary
-        if(image && image !== book?.image && book?.image.includes("cloudinary")) {
-            // extract the public id from the image url
-            const imagePublicId = book?.image.split("/").pop()?.split(".")[0]
-            // delete the image from cloudinary
-            await cloudinary.uploader.destroy(imagePublicId!) 
-            // upload the new image to cloudinary
-            const uploadResponse = await cloudinary.uploader.upload(image)
-
-            // update the image url
-            book.image = uploadResponse.secure_url
+      const bookId = req.params.id; // Get the book ID from the request parameters
+      const userId = req.user?._id; // Get the authenticated user's ID from the request
+  
+      // Ensure the user is authenticated
+      if (!userId) {
+        res.status(401).json({ message: 'User not authenticated' });
+        return;
+      }
+  
+      // Find the book in the database using the ID
+      const book = await Books.findById(bookId);
+      if (!book) {
+        res.status(404).json({ message: 'Book not found' });
+        return;
+      }
+  
+      // Check that the authenticated user is the owner of the book
+      if (book.user.toString() !== userId.toString()) {
+        res.status(403).json({ message: 'Unauthorized to edit this book' }); // Use 403 for forbidden
+        return;
+      }
+  
+      // Destructure updated fields from the request body
+      const { title, caption, rating, description, price, image } = req.body;
+  
+      // If the image is different and is a Cloudinary image, delete the old one and upload the new one
+      if (image && image !== book.image && book.image.includes("cloudinary")) {
+        try {
+          // Extract the public ID from the existing image URL for Cloudinary deletion
+          const urlParts = book.image.split("/");
+          const fileNameWithExt = urlParts[urlParts.length - 1]; // Get the last part of the URL (filename)
+          const imagePublicId = fileNameWithExt.split(".")[0]; // Remove extension
+  
+          if (imagePublicId) {
+            await cloudinary.uploader.destroy(imagePublicId); // Delete the old image from Cloudinary
+          }
+  
+          // Upload the new image to Cloudinary and set the new URL on the book
+          const uploadedImage = await cloudinary.uploader.upload(image);
+          book.image = uploadedImage.secure_url;
+        } catch (cloudinaryError) {
+          // Handle any errors from Cloudinary
+          console.error("Cloudinary operation failed:", cloudinaryError);
+          res.status(500).json({ message: 'Image processing failed' });
+          return;
         }
-
+      }
+  
+      // Conditionally update book fields only if new values are provided
+      if (title !== undefined) book.title = title;
+      if (caption !== undefined) book.caption = caption;
+      if (rating !== undefined) book.rating = rating;
+      if (description !== undefined) book.description = description;
+      if (price !== undefined) book.price = price;
+  
+      // Save the updated book back to the database
+      await book.save();
+  
+      // Respond with success and the updated book data
+      res.status(200).json({ message: 'Book updated successfully', book });
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: 'Something went wrong' });
-        
+      // Pass any unexpected errors to the centralized error handler
+      next(error);
     }
-}
+  };
+  
 
 export const deleteBooks = async(req: Request, res: Response, next: NextFunction) => {
     try {
