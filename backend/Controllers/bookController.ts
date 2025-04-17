@@ -11,12 +11,13 @@ declare global {
     }
   }
 
-export const RegNewBook = async (req: Request, res: Response) => {
+export const RegNewBook = async (req: Request, res: Response): Promise<void> => {
     try {
         const { caption, description, image, price,rating,  title } = req.body as IBookSchema
 
         if(!caption || !description || !image || !price || !rating || !title) {
-            return res.status(400).json({ message: "Provide all fields."})
+             res.status(400).json({ message: "Provide all fields."})
+             return
         }
 
         // Upload to cloudinary
@@ -36,6 +37,7 @@ export const RegNewBook = async (req: Request, res: Response) => {
         await newBook.save()
     } catch (error: any) {
         console.log(error)
-        return res.status(500).json({ message: error.message })
+         res.status(500).json({ message: error.message })
+
     }
 }

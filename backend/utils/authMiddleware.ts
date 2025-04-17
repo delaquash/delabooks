@@ -3,14 +3,15 @@ import jwt from "jsonwebtoken";
 import User from "../Model/User";
 import { JWTPayload, IUserRequest } from "../types/types"
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const authHeader = req.headers.authorization;
         
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(401).json({ 
+             res.status(401).json({ 
                 message: 'Authorization header missing or invalid format' 
             });
+            return
         }
 
        /* The line `const token = authHeader.split(" ")[1]` is splitting the authorization header value
@@ -18,9 +19,10 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         const token = authHeader.split(" ")[1]
 
         if(!token) {
-            return res.status(401).json({ 
+             res.status(401).json({ 
                 message: 'No token provided, access denied!!!' 
             });
+            return;
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload
@@ -28,19 +30,21 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         // find user
         const user = await User.findById(decoded.userId).select("-password")
         if (!user) {
-            return res.status(401).json({ 
+             res.status(401).json({ 
                 message: 'User not found, access denied!!!' 
             });
+            return;
         }
         // Check if user is admin
         req.user = user;
 
         next()
     } catch (error) {
-        return res.status(401).json({ 
+         res.status(401).json({ 
             message: 'Invalid token',
             error: error instanceof Error ? error.message : 'Unknown error'
         });
+        return
     }
 }
 
