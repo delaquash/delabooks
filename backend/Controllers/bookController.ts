@@ -11,7 +11,7 @@ declare global {
     }
   }
 
-export const RegNewBook = async (req: Request, res: Response): Promise<void> => {
+export const RegNewBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { caption, description, image, price,rating,  title } = req.body as IBookSchema
 
@@ -28,20 +28,50 @@ export const RegNewBook = async (req: Request, res: Response): Promise<void> => 
         const newBook = new Books({
             title,
             caption,
+            price,
             rating,
             description,
             image: imageUrl,
             user: req.user?._id
         })
 
-        await newBook.save()
+        await newBook.save();
+         // Add this response to complete the request
+         res.status(201).json({
+            success: true,
+            message: "Book created successfully",
+            book: newBook
+        });
     } catch (error: any) {
         console.log(error)
-         res.status(500).json({ message: error.message })
+         next(error)
 
     }
 }
 
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Retrieves a paginated list of books from the database, sorted by creation date.
+ * 
+ * This function accepts query parameters to determine the pagination settings:
+ * - `limit`: Number of books to return per page. Defaults to 10 if not provided.
+ * - `page`: The page number to retrieve. Defaults to 1 if not provided.
+ * 
+ * The response includes the following details:
+ * - `success`: Boolean indicating the operation's success.
+ * - `books`: Array of book objects, each populated with the username and profile image of the owner.
+ * - `totalBooks`: Total number of books in the database.
+ * - `totalPages`: Total number of pages available based on the limit.
+ * - `currentPage`: The current page number, adjusted to not exceed `totalPages`.
+ * 
+ * In case of an error during retrieval, the error is logged and passed to the next middleware.
+ * 
+ * @param req - Express request object containing query parameters `limit` and `page`.
+ * @param res - Express response object used to send the JSON response.
+ * @param next - Express next function to pass control to the next middleware.
+ */
+
+/*******  8f07c002-cbed-4f87-aeab-2f1dc50743c8  *******/
 export const getBooks = async(req: Request, res: Response, next: NextFunction) => {
     try {
         
@@ -68,18 +98,48 @@ export const getBooks = async(req: Request, res: Response, next: NextFunction) =
         })
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Something went wrong' });
+        next(error)
     }
 }
 
-export const getBookUser = async(req: Request, res: Response, next: NextFunction) => {
+// export const getBookUser = async(req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const user = req.user?._id
+//         const bookUser = await Books.find({ user }).sort({ createdAt: -1 })
+//         res.status(200).json({ bookUser })
+//     } catch (error) {
+//         console.log(error)
+//         next(error)
+//     }
+// }
+
+export const getBookUserById = async(req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = req.user?._id
-        const bookUser = await Books.find({ user }).sort({ createdAt: -1 })
-        res.status(200).json({ bookUser })
+        // Extract the user ID from the request parameters
+        const userID = req.params.userId;
+        
+        // Check if the user ID is valid (e.g., a valid ObjectId format)
+        const authenticatedUserId = req.user?._id; // Get the authenticated user's ID from the request
+        
+        // Ensure the user is authenticated
+        if (userID !== authenticatedUserId.toString()) {
+            res.status(403).json({ message: 'Unauthorized to access this user\'s books' });
+            return;
+        }
+          
+        // Find the books in the database using the user ID
+        const book = await Books.find({user: userID}).sort({ createdAt: -1 })
+        if (!book) {
+            res.status(404).json({ message: 'Books not found for this user' });
+            return;
+        }
+
+        // Respond with the found books
+        res.status(200).json({ book });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Something went wrong' });
+        next(error)
+        
     }
 }
 
@@ -177,6 +237,6 @@ export const deleteBooks = async(req: Request, res: Response, next: NextFunction
         res.status(200).json({ message: 'Book deleted successfully' });
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'Something went wrong' });
+        next(error)
     }
 }
