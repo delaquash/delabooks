@@ -71,3 +71,31 @@ export const getBooks = async(req: Request, res: Response, next: NextFunction) =
         res.status(500).json({ message: 'Something went wrong' });
     }
 }
+
+export const deleteBooks = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+        // first you get the book by ID
+        const book = await Books.findById(req.params.id);
+        if (!book) res.status(404).json({ message: 'Book not found' });
+
+        // check if the book belongs to the user who is deleting it
+        if(book?.user.toString() !== req.user?._id.toString()) res.status(401).json({ message: 'Unauthorized' });
+        
+        // delete from cloudinary
+        if(book?.image && book.image.includes("cloudinary")) {
+            try {
+                const imagePublicId = book?.image.split("/").pop()?.split(".")[0]
+                await cloudinary.uploader.destroy(imagePublicId!) 
+            } catch (deleteError) {
+                console.log("Delete error", deleteError)
+            }
+        }
+        // delete
+        await book?.deleteOne()
+
+        res.status(200).json({ message: 'Book deleted successfully' });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+}
