@@ -3,6 +3,14 @@ import jwt from "jsonwebtoken";
 import User from "../Model/User";
 import { JWTPayload, IUserRequest } from "../types/types"
 
+declare global {
+    namespace Express {
+      interface Request {
+        user?: any;
+      }
+    }
+  }
+
 const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const authHeader = req.headers.authorization;
