@@ -1,5 +1,5 @@
 // FOREST
-const COLORS = {
+export const COLORS = {
     primary: "#4CAF50",
     textPrimary: "#2e5a2e",
     textSecondary: "#688f68",
