@@ -121,7 +121,7 @@ const Login = () => {
             >
             <TouchableOpacity>
             <Text
-                // style={styles.link}
+                style={styles.link}
               >
                 Sign UP
               </Text>
