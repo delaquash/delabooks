@@ -1,7 +1,9 @@
-import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import COLORS from '@/constant/color'
+import { Link } from "expo-router";
+
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -95,6 +97,46 @@ const Signup = () => {
                   </TouchableOpacity>
                 </View>
               </View>
+              
+                        <TouchableOpacity
+                          style={styles.button}
+                          // onPress={handleLogin}
+                          disabled={loading}
+                        >
+                          {loading ? (
+                                <ActivityIndicator color="#fff"/>
+                          ) : (
+                            <Text 
+                            style={styles.buttonText}
+                            > 
+                              Login 
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+              
+                        {/* FOOTER */}
+                        <View 
+                          style={styles.footer}
+                        >
+                          <Text
+                            style={styles.footerText}
+                          >
+                            Don't have an account? 
+                          </Text>
+                          <Link
+                            href="/login"
+                            asChild
+                          >
+                          <TouchableOpacity>
+                          <Text
+                              style={styles.link}
+                            >
+                              Sign UP
+                            </Text>
+                          </TouchableOpacity>
+                          </Link>
+                        </View>
+
             </View>
           </View>
         </View>
@@ -167,5 +209,37 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     color: COLORS.textPrimary,
     fontWeight: "500",
-  }
+  },
+   button: {
+      backgroundColor: COLORS.primary,
+      borderRadius: 12,
+      height: 50,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 16,
+      shadowColor: COLORS.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    buttonText: {
+      fontSize: 16,
+      color: COLORS.white,
+      fontWeight: "600"
+    },
+    footer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 36
+    },
+    footerText:{
+      color: COLORS.textSecondary,
+      marginRight: 5
+    },
+    link: {
+      color: COLORS.primary,
+      fontWeight: "600"
+    }
 })
