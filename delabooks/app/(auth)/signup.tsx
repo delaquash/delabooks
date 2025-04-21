@@ -2,10 +2,10 @@ import { StyleSheet, Text, View, KeyboardAvoidingView, Platform, TextInput, Touc
 import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import COLORS from '@/constant/color'
-import { Link } from "expo-router";
-
+import { useRouter} from "expo-router";
 
 const Signup = () => {
+  const router = useRouter()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -121,20 +121,16 @@ const Signup = () => {
                           <Text
                             style={styles.footerText}
                           >
-                            Don't have an account? 
+                            Already have an account? 
                           </Text>
-                          <Link
-                            href="/login"
-                            asChild
-                          >
-                          <TouchableOpacity>
+                        
+                          <TouchableOpacity onPress={()=>router.back()}>
                           <Text
                               style={styles.link}
                             >
                               Sign UP
                             </Text>
                           </TouchableOpacity>
-                          </Link>
                         </View>
 
             </View>
