@@ -1,7 +1,14 @@
 import { create } from "zustand";
 import  AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const useAuthStore = create((set)=> ({
+type AuthState = {
+    user: any | null; // You can define a proper `User` type later
+    token: string | null;
+    isLoading: boolean;
+    register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  };
+
+export const useAuthStore = create<AuthState>((set)=> ({
     user: null,
     token: null,
     isLoading: false,
