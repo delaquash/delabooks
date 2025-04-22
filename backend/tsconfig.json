@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es2017",
     "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "types": ["node", "express"],
-    "skipLibCheck": true,
-    "moduleResolution": "node"  // Added this which may help with your import issue
+    "skipLibCheck": true
   },
-
-  "include": ["types", "backend/**/*.ts", "types/global.d.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
