@@ -6,10 +6,12 @@ import authRoute from "./Routes/authRoute";
 import bookRoute from "./Routes/bookRoute";
 import { connectDB } from "./config/db";
 import errorHandler from './utils/errorHandler';
+import job from './utils/cron';
 
 const app = express();
 const PORT  = process.env.PORT
 
+job.start()
 app.use(express.json())
 app.use(cors())
 // Routes
