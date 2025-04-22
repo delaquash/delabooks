@@ -10,16 +10,26 @@ not running" along with the response status code. Additionally, it handles error
 during the HTTPS request. */
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
-// import cron from "cron";
 const cron_1 = require("cron");
 const https_1 = __importDefault(require("https"));
+const http_1 = __importDefault(require("http"));
+const url_1 = __importDefault(require("url"));
 const job = new cron_1.CronJob("*/14 * * * *", function () {
-    https_1.default.get(process.env.API_URI, (res) => {
-        if (res.statusCode === 200)
+    // Parse the URI to determine which protocol to use
+    const apiUrl = process.env.API_URI;
+    const parsedUrl = url_1.default.parse(apiUrl);
+    // Choose the appropriate module based on protocol
+    const requestModule = parsedUrl.protocol === 'https:' ? https_1.default : http_1.default;
+    requestModule.get(apiUrl, (res) => {
+        if (res.statusCode === 200) {
             console.log("API is running");
-        else
+        }
+        else {
             console.log("API is not running", res.statusCode);
+        }
     })
         .on("error", (err) => console.log("Error while checking API", err));
 });
+// Start the job
+job.start();
 exports.default = job;
