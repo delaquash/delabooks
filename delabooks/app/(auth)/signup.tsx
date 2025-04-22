@@ -23,13 +23,14 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, isLoading, register } = useAuthStore();
+  const { user, isLoading, register, token } = useAuthStore();
 
   const handleSignUp = async () => {
     const result = await register(username, email, password);
     if (!result.success) Alert.alert("Error", result.message);
   };
-
+  console.log(user)
+  console.log(token)
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
