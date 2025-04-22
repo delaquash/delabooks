@@ -15,7 +15,7 @@ export const useAuthStore = create<AuthState>((set)=> ({
     register: async (username: string, email: string, password: string)=> {
         set({ isLoading: true })
         try {
-            const response = await fetch("http://localhost:7000/api/v1/auth/register", {
+            const response = await fetch("https://delabooks.onrender.com/api/v1/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
