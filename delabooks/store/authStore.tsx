@@ -12,6 +12,8 @@ type AuthState = {
     token: string | null;
     isLoading: boolean;
     register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+    login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+    logout: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set)=> ({
@@ -79,7 +81,7 @@ export const useAuthStore = create<AuthState>((set)=> ({
             console.log("Error from checkAuth", error)
         }
     },
-    log: async() => {
+    logout: async() => {
         await AsyncStorage.removeItem("token")
         await AsyncStorage.removeItem("user")
         set({ token: null, user: null})

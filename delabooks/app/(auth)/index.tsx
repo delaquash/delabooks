@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions, ActivityIndicator, ScrollView, Platform } from 'react-native'
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Dimensions, ActivityIndicator, ScrollView, Platform, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { Ionicons } from "@expo/vector-icons"
 import COLORS from '@/constant/color';
 import { Link } from "expo-router";
 import { KeyboardAvoidingView } from 'react-native';
+import { useAuthStore } from '@/store/authStore';
 
 const { width } = Dimensions.get("window");
 
@@ -13,6 +14,13 @@ const Login = () => {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  const { token, user, login} = useAuthStore()
+
+  const handleLogin = async() => {
+      const result = await login(email, password)
+      if(!result.success) Alert.alert("Error", result.message)
+  }
   return (
     <KeyboardAvoidingView
       style={{ flex: 1}}
@@ -92,7 +100,7 @@ const Login = () => {
 
           <TouchableOpacity
             style={styles.button}
-            // onPress={handleLogin}
+            onPress={handleLogin}
             disabled={loading}
           >
             {loading ? (
