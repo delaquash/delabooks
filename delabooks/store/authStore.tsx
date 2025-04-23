@@ -11,6 +11,7 @@ type AuthState = {
     user: IUSer | null; // You can define a proper `User` type later
     token: string | null;
     isLoading: boolean;
+    checkAuth: () => Promise<void>;
     register: (username: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
     login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
     logout: () => Promise<void>;
