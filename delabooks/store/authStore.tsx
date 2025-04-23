@@ -56,8 +56,17 @@ export const useAuthStore = create<AuthState>((set)=> ({
             })
             const data = await res.json()
             if(!res.ok) throw new Error(data?.message || "Something went wrong")
-        } catch (error) {
-            
+
+            await AsyncStorage.setItem("token", data.token)
+            await AsyncStorage.setItem("user", JSON.stringify(data.user))
+
+            set({ user: data?.user, token: data?.token, isLoading: false })
+
+            return { success: true}
+        } catch (error: any) {
+            console.log(error)
+            return { success: false, message: error.message }
+            set({ isLoading: false })
         }
     },
     checkAuth: async() => {
