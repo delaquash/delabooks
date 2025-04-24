@@ -1,49 +1,57 @@
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 // @ts-ignore
-import { Link, useRouter, useSegments } from 'expo-router';
-import { useAuthStore } from "@/store/authStore";
+import { useRouter } from 'expo-router';
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
     const checkUserFlow = async () => {
-      const onboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
-      const token = await AsyncStorage.getItem('token');
-      const userJson = await AsyncStorage.getItem('user');
-      const onboardingTime = await AsyncStorage.getItem('onboardingTimestamp');
-      const user = userJson ? JSON.parse(userJson) : null;
-      const now = Date.now();
+      // Retrieve flags and user data from AsyncStorage
+      const onboarding = await AsyncStorage.getItem('hasCompletedOnboarding'); // Flag to check if user finished onboarding
+      const token = await AsyncStorage.getItem('token'); // Logged in user token
+      const userJson = await AsyncStorage.getItem('user'); // Serialized user object
+      const onboardingTime = await AsyncStorage.getItem('onboardingTimestamp'); // When user last completed onboarding
 
+      const user = userJson ? JSON.parse(userJson) : null; // Parse user if it exists
+      const now = Date.now(); // Current time in milliseconds
+
+      // ✅ If user has never completed onboarding, send them to the Welcome screen
       if (!onboarding) {
-        router.replace('/(onboarding)/Welcome');
+        router.push('/(onboarding)/Welcome');
         return;
       }
 
-      // Check if 24 hours have passed since last onboarding
-      if (onboardingTime && now - parseInt(onboardingTime) > 24 * 60 * 60 * 1000) {
+      // ✅ If 15 minutes have passed since last onboarding, show GetStarted again
+      if (onboardingTime && now - parseInt(onboardingTime) > 15 * 60 * 1000) {
+        // Update the timestamp to reset the 15-minute timer
         await AsyncStorage.setItem('onboardingTimestamp', now.toString());
-        router.replace('/(onboarding)/GetStarted');
+
+        // Push the user to GetStarted screen to choose login or signup
+        router.push('/(onboarding)/GetStarted');
         return;
       }
 
+      // ✅ If user has a token and user data (authenticated), navigate to tab layout
       if (token && user) {
-        router.replace('/(tabs)');
+        router.push('/(tabs)');
       } else {
-        router.replace('/(onboarding)/GetStarted');
+        // ✅ User completed onboarding but is not logged in – send them to GetStarted screen
+        router.push('/(onboarding)/GetStarted');
       }
     };
 
+    // Run the user flow check on component mount
     checkUserFlow();
   }, []);
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <View style={styles.container}>
+        {/* Loading spinner while we check user's state */}
         <ActivityIndicator size="large" color="#007BFF" />
       </View>
     </GestureHandlerRootView>
