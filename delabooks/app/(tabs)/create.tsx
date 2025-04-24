@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView,Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 // @ts-ignore 
 import { useRouter } from 'expo-router';
@@ -13,6 +13,8 @@ const Create = () => {
   const [title, setTitle] = useState("")
   const [rating, setRating] = useState(3)
   const [imagebase64, setImagebase64] = useState(null)
+
+  const handleImagePicker= () => {}
 
   const RenderRatePicker =() => {
     const starRatings = [];
@@ -72,7 +74,23 @@ const Create = () => {
             {/* Book rating */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Book Rating</Text>
+              {RenderRatePicker()}
             </View>
+              {/* Book Image */}
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Book Image</Text>
+                <TouchableOpacity style={styles.imagePicker} onPress={handleImagePicker}>
+                  {image ? (
+                    <Image source={{ uri: image }} style={styles.previewImage} />
+                  ) :(
+                    <View style={styles.placeHolderText}>
+                      <Ionicons name="image-outline" size={40} color={COLORS.textSecondary} />
+                      <Text style={styles.placeHolderText}>Tap to select image</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
+            {/* Book caption */}
           </View>
           </View>
          </ScrollView>
@@ -96,5 +114,9 @@ const styles = StyleSheet.create({
   inputIcon:{},
   input:{},
   starButton:{},
-  ratingContainer:{}
+  ratingContainer:{}, 
+  imagePicker:{},
+  image:{},
+  previewImage:{},
+  placeHolderText:{}
 })
