@@ -4,60 +4,56 @@ import { useAuthStore } from '@/store/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // This component manages the authentication flow
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, token, checkAuth } = useAuthStore();
   const router = useRouter();
   const segments = useSegments();
+
   const [isReady, setIsReady] = useState(false);
-  
-  // This checks if the user has seen the onboarding
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
-  
-  // Check auth status when app loads
+
+  // Check onboarding and auth on mount
   useEffect(() => {
     const prepareApp = async () => {
-      // Check if user has completed onboarding before
-      const onboardingStatus = await AsyncStorage.getItem('hasCompletedOnboarding');
-      setHasSeenOnboarding(onboardingStatus === 'true');
-      
-      // Check authentication
+      const onboardingStatus = await AsyncStorage.getItem("hasCompletedOnboarding");
+      setHasSeenOnboarding(onboardingStatus === "true");
+
       await checkAuth();
       setIsReady(true);
     };
-    
+
     prepareApp();
   }, []);
-  
-  // Handle navigation based on auth status
+
+  // Navigation logic after everything is ready
   useEffect(() => {
     if (!isReady) return;
-    
-    const inAuthGroup = segments[0] === '(auth)';
-    const inOnboardingGroup = segments[0] === '(onboarding)';
-    const inTabsGroup = segments[0] === '(tabs)';
-    
-    // Handle navigation logic
+
+    const inOnboardingGroup = segments[0] === "(onboarding)";
+    const inTabsGroup = segments[0] === "(tabs)";
+    const currentScreen = segments[1]; // e.g., "welcome" or "getstarted"
+
     if (!hasSeenOnboarding) {
-      // If user hasn't seen onboarding, always show onboarding first
-      if (!inOnboardingGroup) {
-        router.replace('/(onboarding)/welcome');
+      // First-time user → Welcome screen
+      if (currentScreen !== "welcome") {
+        router.replace("/(onboarding)/welcome");
       }
-    } else if (user && token) {
-      // User is authenticated
-      if (!inTabsGroup) {
-        router.replace('/(tabs)');
+    } else if (!user || !token) {
+      // Onboarded but not logged in → GetStarted screen
+      if (currentScreen !== "getstarted") {
+        router.replace("/(onboarding)/getstarted");
       }
     } else {
-      // User is not authenticated
-      if (!inAuthGroup) {
-        router.replace('/(auth)');
+      // Authenticated → Tabs screen
+      if (!inTabsGroup) {
+        router.replace("/(tabs)");
       }
     }
   }, [isReady, user, token, segments, hasSeenOnboarding]);
-  
-  // Show nothing while checking authentication
+
+  // While loading, return nothing or a loading spinner
   if (!isReady) return null;
-  
-  // Render the rest of the app
+
   return <>{children}</>;
 }

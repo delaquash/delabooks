@@ -3,13 +3,21 @@ import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import COLORS from '@/constant/color'
 import { useRouter } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Welcome() {
     const router = useRouter();
     const handlePush = async () => {
-        // Navigate to the next onboarding screen
+        // ✅ Optionally save onboarding status
+        await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
+    
+        // 👇 Use push if you want user to go back to Welcome screen later
         router.push('/(onboarding)/GetStarted');
+    
+        // 👇 Use replace if you want to remove Welcome screen from history
+        // router.replace('/(onboarding)/GetStarted');
       };
+    
      return (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
