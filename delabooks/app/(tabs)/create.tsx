@@ -1,13 +1,9 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 // @ts-ignore 
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
-
-
-
-
 
 const Create = () => {
   const router = useRouter();
@@ -18,8 +14,24 @@ const Create = () => {
   const [rating, setRating] = useState(3)
   const [imagebase64, setImagebase64] = useState(null)
 
-  const RenderRatePicker =() => {}
+  const RenderRatePicker =() => {
+    const starRatings = [];
 
+      for (let i = 1; i <= 5; i++) {
+        starRatings.push(
+          <TouchableOpacity key={i} onPress={() => setRating(i)} style={styles.starButton}>
+            <Ionicons
+              name={i <= rating ? "star" : "star-outline"}  
+              size={24}
+              color={i <= rating ? "#f4b400": COLORS.textSecondary}
+          />
+          </TouchableOpacity>
+        )
+    return (
+      <View style={styles.ratingContainer}>{starRatings}</View>
+    )
+  }
+  }
   return (
        <KeyboardAvoidingView
          style={{ flex: 1 }}
@@ -82,5 +94,7 @@ const styles = StyleSheet.create({
   label:{},
   inputContainer:{},
   inputIcon:{},
-  input:{}
+  input:{},
+  starButton:{},
+  ratingContainer:{}
 })
