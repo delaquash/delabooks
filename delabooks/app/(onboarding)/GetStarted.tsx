@@ -1,48 +1,85 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
+// @ts-ignore
 import { useRouter } from 'expo-router';
 import { GestureHandlerRootView, TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 
 export default function GetStartedScreen() {
   const router = useRouter();
+  const [isReturningUser, setIsReturningUser] = useState(false);
+
+  useEffect(() => {
+    const checkIfReturningUser = async () => {
+      const timestamp = await AsyncStorage.getItem('onboardingTimestamp');
+
+      if (timestamp) {
+        const now = Date.now();
+        const lastTime = parseInt(timestamp, 10);
+
+        // If 24 hours have passed, show returning user message
+        if (now - lastTime >= 24 * 60 * 60 * 1000) {
+          setIsReturningUser(true);
+        }
+      }
+    };
+
+    checkIfReturningUser();
+  }, []);
 
   const handleLogin = async () => {
     // Mark onboarding as complete
     await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
-    router.replace('/(auth)');
+
+    // Save current timestamp
+    await AsyncStorage.setItem('onboardingTimestamp', Date.now().toString());
+
+    // Navigate to login
+    router.push('/(auth)');
   };
 
   const handleSignup = async () => {
     // Mark onboarding as complete
     await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
-    router.replace('/(auth)/signup');
+
+    // Save current timestamp
+    await AsyncStorage.setItem('onboardingTimestamp', Date.now().toString());
+
+    // Navigate to signup
+    router.push('/(auth)/signup');
   };
 
   return (
     <GestureHandlerRootView>
-    <View style={styles.container}>
-      {/* Your onboarding image */}
-      <Image 
-        source={require('@/assets/images/Authentication-rafiki.png')}
-        style={styles.image}
-        resizeMode="contain"
-      />
-      
-      <Text style={styles.title}>Ready to Start?</Text>
-      <Text style={styles.subtitle}>
-        Create an account or log in to start exploring your next favorite book
-      </Text>
-      
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginText}>Log In</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
-          <Text style={styles.signupText}>Sign Up</Text>
-        </TouchableOpacity>
+      <View style={styles.container}>
+        <Image 
+          source={require('@/assets/images/Authentication-rafiki.png')}
+          style={styles.image}
+          resizeMode="contain"
+        />
+
+        {/* Show a welcome back message if user is returning */}
+        {isReturningUser && (
+          <Text style={styles.returningUserText}>
+            👋 Welcome back! It's been a while. Log in or sign up to continue.
+          </Text>
+        )}
+
+        <Text style={styles.title}>Ready to Start?</Text>
+        <Text style={styles.subtitle}>
+          Create an account or log in to start exploring your next favorite book
+        </Text>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginText}>Log In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
+            <Text style={styles.signupText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
     </GestureHandlerRootView>
   );
 }
@@ -71,6 +108,13 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     marginBottom: 48,
+  },
+  returningUserText: {
+    fontSize: 16,
+    color: '#007BFF',
+    marginBottom: 16,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   buttonContainer: {
     width: '100%',

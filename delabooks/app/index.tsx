@@ -1,29 +1,51 @@
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+// @ts-ignore
 import { Link, useRouter, useSegments } from 'expo-router';
 import { useAuthStore } from "@/store/authStore";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function index() {
+
+export default function Index() {
   const router = useRouter();
+
   useEffect(() => {
-    // Our AuthProvider will handle the actual redirection logic
-    // This is just a fallback in case someone navigates directly to '/'
-    
-    // You can optionally add a timeout to ensure this screen doesn't stay visible for too long
-    const timeout = setTimeout(() => {
-      router.replace('/(onboarding)/welcome');
-    }, 100);
-    
-    return () => clearTimeout(timeout);
+    const checkUserFlow = async () => {
+      const onboarding = await AsyncStorage.getItem('hasCompletedOnboarding');
+      const token = await AsyncStorage.getItem('token');
+      const userJson = await AsyncStorage.getItem('user');
+      const onboardingTime = await AsyncStorage.getItem('onboardingTimestamp');
+      const user = userJson ? JSON.parse(userJson) : null;
+      const now = Date.now();
+
+      if (!onboarding) {
+        router.replace('/(onboarding)/Welcome');
+        return;
+      }
+
+      // Check if 24 hours have passed since last onboarding
+      if (onboardingTime && now - parseInt(onboardingTime) > 24 * 60 * 60 * 1000) {
+        await AsyncStorage.setItem('onboardingTimestamp', now.toString());
+        router.replace('/(onboarding)/GetStarted');
+        return;
+      }
+
+      if (token && user) {
+        router.replace('/(tabs)');
+      } else {
+        router.replace('/(onboarding)/GetStarted');
+      }
+    };
+
+    checkUserFlow();
   }, []);
-  
+
   return (
     <GestureHandlerRootView style={styles.container}>
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#007BFF" />
-      
-    </View>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#007BFF" />
+      </View>
     </GestureHandlerRootView>
   );
 }
