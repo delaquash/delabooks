@@ -18,7 +18,7 @@ export default function GetStartedScreen() {
         const lastTime = parseInt(timestamp, 10);
 
         // If 24 hours have passed, show returning user message
-        if (now - lastTime >= 24 * 60 * 60 * 1000) {
+        if (now - lastTime >= 15 * 60 * 1000) { // 15 minutes
           setIsReturningUser(true);
         }
       }

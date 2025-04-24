@@ -26,7 +26,7 @@ import {
           const lastTime = parseInt(timestamp, 10);
   
           // If 24 hours have passed, consider user returning
-          if (now - lastTime >= 24 * 60 * 60 * 1000) {
+          if (now - lastTime >= 15 * 60 * 1000) { // 15 minutes
             setIsReturningUser(true);
           }
         }
