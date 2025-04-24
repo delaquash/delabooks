@@ -5,6 +5,10 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
 
+
+
+
+
 const Create = () => {
   const router = useRouter();
   const [laoding, setLaoding] = useState(false)
@@ -13,6 +17,9 @@ const Create = () => {
   const [title, setTitle] = useState("")
   const [rating, setRating] = useState(3)
   const [imagebase64, setImagebase64] = useState(null)
+
+  const RenderRatePicker =() => {}
+
   return (
        <KeyboardAvoidingView
          style={{ flex: 1 }}
@@ -28,6 +35,7 @@ const Create = () => {
 
           {/* Form */}
           <View style={styles.form}>
+            {/* Book title */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Book Title</Text>
               {/* Text Input for Book Title */}
@@ -46,7 +54,12 @@ const Create = () => {
                     placeholderTextColor={COLORS.placeholderText}
                   />
               </View>
-              {/* Ratinga */}
+           
+            </View>
+
+            {/* Book rating */}
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Book Rating</Text>
             </View>
           </View>
           </View>
