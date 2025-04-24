@@ -8,18 +8,21 @@ import { useAuthStore } from '@/store/authStore';
 
 const { width } = Dimensions.get("window");
 
-const Login = () => {
+export default function login () {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const { token, user, login} = useAuthStore()
+  const { token, user, login} = useAuthStore();
+  console.log(token)
+  console.log(user)
 
   const handleLogin = async() => {
       const result = await login(email, password)
       if(!result.success) Alert.alert("Error", result.message)
+        console.log(result.message)
   }
   return (
     <KeyboardAvoidingView
@@ -145,7 +148,7 @@ const Login = () => {
   )
 }
 
-export default Login
+
 
 const styles = StyleSheet.create({
   scrollViewStyle: {

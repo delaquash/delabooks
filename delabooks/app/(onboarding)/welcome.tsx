@@ -2,19 +2,25 @@ import { KeyboardAvoidingView,Image, Platform, StyleSheet, Text, View, Touchable
 import React from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import COLORS from '@/constant/color'
+import { useRouter } from 'expo-router'
 
-const WelcomeScreen = () => {
+export default function Welcome() {
+    const router = useRouter();
+    const handlePush = async () => {
+        // Navigate to the next onboarding screen
+        router.push('/(onboarding)/GetStarted');
+      };
      return (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View >
-                <View>
+            <View style={styles.container}>
+                <View style={{ marginTop: -90}}>
                     <Image 
                     source={require("../../assets/images/book-cuate.png")}
                     resizeMode='contain'
-                    style={{width:"100%", height:"100%"}}
+                    style={{width:"100%", height:"70%", marginBottom: -8}}
                     />
                 </View>
                 <View>
@@ -24,7 +30,7 @@ const WelcomeScreen = () => {
                     </Text>
                 </View>
                 <View>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handlePush}>
                         <Ionicons
                             name="arrow-forward-outline"
                             size={30}
@@ -38,9 +44,14 @@ const WelcomeScreen = () => {
      )
 }
 
-export default WelcomeScreen
 
 const styles = StyleSheet.create({
+    container: {
+        flexGrow: 1,
+        backgroundColor: COLORS.background,
+        padding: 20,
+        justifyContent: "center",
+    },
     title:{},
     subTitle:{}
 })

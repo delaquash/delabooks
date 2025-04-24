@@ -1,33 +1,38 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { Link, useRouter, useSegments } from 'expo-router';
 import { useAuthStore } from "@/store/authStore";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function index() {
   const router = useRouter();
-  const segments = useSegments();
-  const {user, token, checkAuth } = useAuthStore()
-
-
-  useEffect(()=> {
-    checkAuth() ? router.replace("/(tabs)") : router.replace("/(auth)")
-  }, [])
+  useEffect(() => {
+    // Our AuthProvider will handle the actual redirection logic
+    // This is just a fallback in case someone navigates directly to '/'
+    
+    // You can optionally add a timeout to ensure this screen doesn't stay visible for too long
+    const timeout = setTimeout(() => {
+      router.replace('/(onboarding)/welcome');
+    }, 100);
+    
+    return () => clearTimeout(timeout);
+  }, []);
+  
   return (
-    <View style={styles.cotainer}>
-      <Link href="/(auth)/signup">Sign Up</Link>
-      <Link href="/(auth)">Login</Link>
+    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#007BFF" />
+      
     </View>
+    </GestureHandlerRootView>
   );
 }
 
-
 const styles = StyleSheet.create({
-  cotainer: {
+  container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
-  title: {
-    color: "blue"
-  }
-})
+});

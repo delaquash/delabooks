@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>((set)=> ({
     login: async(email: string, password: string ) => {
         set({ isLoading: true})
         try {
-            const res = await fetch("https://delabooks.onerender.com/api/auth/login", {
+            const res = await fetch("https://delabooks.onrender.com/api/v1/auth/login", {
                 method: "POST",
                 headers:{
                     "Content-Type": "application/json"
@@ -58,6 +58,7 @@ export const useAuthStore = create<AuthState>((set)=> ({
                 body: JSON.stringify({ email, password})
             })
             const data = await res.json()
+            console.log(data)
             if(!res.ok) throw new Error(data?.message || "Something went wrong")
 
             await AsyncStorage.setItem("token", data.token)

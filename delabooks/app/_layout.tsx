@@ -3,9 +3,11 @@ import { Stack } from "expo-router";
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AuthProvider } from "@/component/AuthProvider";
 
 export default function RootLayout() {
   return (
+    <AuthProvider>
     <SafeAreaProvider>
       <SafeAreaScreen >
         <Stack screenOptions={{ headerShown: false }}>
@@ -16,5 +18,6 @@ export default function RootLayout() {
       </SafeAreaScreen>
       <StatusBar style="light"/>
     </SafeAreaProvider>
+    </AuthProvider>
   );
 }
