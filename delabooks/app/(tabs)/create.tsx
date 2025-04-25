@@ -47,7 +47,7 @@ const Create = () => {
           const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, { 
             encoding: FileSystem.EncodingType.Base64 
           });
-          setImage(base64)
+          setImagebase64(base64)
         }
       }
     } catch (error) {
