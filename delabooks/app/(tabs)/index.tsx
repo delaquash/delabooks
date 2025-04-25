@@ -102,9 +102,9 @@ const Home = () => {
         <Image style={styles.bookImage} source={item.image}  contentFit='cover'/>
       </View>
 
-      <View style={styles.ratingContainer}>
+      <View style={styles.bookDetails}>
         <Text style={styles.BookTitle}>{item.title}</Text>
-        <View>{RenderRatePicker(item.rating)}</View>
+        <View style={styles.ratingContainer}>{RenderRatePicker(item.rating)}</View>
       </View>
     </View>
   )
@@ -137,4 +137,5 @@ const styles = StyleSheet.create({
   ratingContainer:{},
   starButton:{},
   BookTitle:{},
+  bookDetails:{}
 })
