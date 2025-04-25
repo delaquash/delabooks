@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView,Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import { KeyboardAvoidingView,Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react';
 // @ts-ignore 
 import { useRouter } from 'expo-router';
@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system'
 
 const Create = () => {
   const router = useRouter();
-  const [laoding, setLaoding] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState<string|null>(null)
   const [title, setTitle] = useState("")
@@ -51,10 +51,11 @@ const Create = () => {
         }
       }
     } catch (error) {
-      
+      console.error("TError picking image", error)
+      Alert.alert("Error", "There was a problem selecting your image")
     }
   }
-
+const handleSubmit= () => {}
   const RenderRatePicker =() => {
     const starRatings = [];
 
@@ -130,6 +131,34 @@ const Create = () => {
                 </TouchableOpacity>
               </View>
             {/* Book caption */}
+            <View style={styles.formGroup}>
+                <Text style={styles.label}> Caption</Text>
+                <TextInput 
+                  style={styles.textArea}
+                  placeholder='Write your review about this book'
+                  placeholderTextColor={COLORS.placeholderText}
+                  value={caption}
+                  onChangeText={setCaption}
+                  multiline
+                />
+            </View>
+
+            {/* SuBMIT */}
+            <TouchableOpacity disabled={loading} onPress={handleSubmit} style={styles.button}>
+              {loading ? (
+                <ActivityIndicator color={COLORS.white}/>
+              ) : (
+                <>
+                  <Ionicons 
+                    name="cloud-upload-outline"
+                    size={25}
+                    color={COLORS.white}
+                    style={styles.buttonIcon}
+                  />
+                  <Text style={styles.buttonText}>Share</Text>
+                </>
+              )}
+            </TouchableOpacity>
           </View>
           </View>
          </ScrollView>
@@ -157,5 +186,9 @@ const styles = StyleSheet.create({
   imagePicker:{},
   image:{},
   previewImage:{},
-  placeHolderText:{}
+  placeHolderText:{},
+  textArea:{},
+  buttonIcon:{},
+  buttonText:{},
+  button:{}
 })
