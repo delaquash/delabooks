@@ -1,9 +1,10 @@
-import { KeyboardAvoidingView,Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView,Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
 import React, { useState } from 'react';
 // @ts-ignore 
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
+import * as ImagePicker from 'expo-image-picker';
 
 const Create = () => {
   const router = useRouter();
@@ -14,7 +15,30 @@ const Create = () => {
   const [rating, setRating] = useState(3)
   const [imagebase64, setImagebase64] = useState(null)
 
-  const handleImagePicker= () => {}
+  const handleImagePicker= async() => {
+    try {
+      // request permission if needed
+      if(Platform.OS !== 'web'){
+       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+       console.log({ status }) 
+       if(status !== 'granted'){
+        Alert.alert("Permission denied", "Please grant permission to access media library")
+        return;
+       }
+      }
+
+      // launch image library
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.5,
+        base64: true
+      })
+    } catch (error) {
+      
+    }
+  }
 
   const RenderRatePicker =() => {
     const starRatings = [];
