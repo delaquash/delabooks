@@ -5,10 +5,12 @@ import { useAuthStore } from '@/store/authStore'
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
+import { formatPublishDate } from '@/lib/utils';
 
 
 interface  ItemUser {
   caption: string;
+  createdAt: string;
   _id: string;
   rating: number;
   image: string;
@@ -24,6 +26,7 @@ interface  ItemUser {
 interface Book {
   _id: string;
   caption: string;
+  createdAt: string;
   image: string;
   title: string;
   description?: string;
@@ -108,6 +111,7 @@ const Home = () => {
         <Text style={styles.BookTitle}>{item.title}</Text>
         <View style={styles.ratingContainer}>{RenderRatePicker(item.rating)}</View>
         <Text style={styles.caption}>{item.caption}</Text>
+        <Text style={styles.date}>{formatPublishDate(item.createdAt)}</Text>
       </View>
     </View>
   )
@@ -141,5 +145,6 @@ const styles = StyleSheet.create({
   starButton:{},
   BookTitle:{},
   bookDetails:{},
-  caption:{}
+  caption:{},
+  date:{}
 })
