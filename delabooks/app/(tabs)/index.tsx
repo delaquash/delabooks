@@ -52,9 +52,13 @@ const Home = () => {
        /* `setBooks((prev) => [...prev, ...data.books])` is updating the state of the `books` array by
        adding new books fetched from the API response to the existing books array. */
         setBooks((prev) => [...prev, ...data.books])
-        setHasMore(pageNum < data.total); // Optional: track if more books are available
+        setHasMore(pageNum < data.totalPages); // Optional: track if more books are available
+        setPageNum(pageNum)
     } catch (error) {
-      
+      console.error("Error fetching books", error)
+    } finally {
+      if(refreshing) setRefreshing(false)
+      else setLoading(false)
     }
 
   }
