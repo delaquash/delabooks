@@ -1,0 +1,1 @@
+export const API_URI = 'https://delabooks.onrender.com/api/v1'

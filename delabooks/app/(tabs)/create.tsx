@@ -6,16 +6,19 @@ import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system'
+import { API_URI } from '@/constant/app';
+import { useAuthStore } from '@/store/authStore';
 
 const Create = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false)
   const [caption, setCaption] = useState("");
-  const [image, setImage] = useState<string|null>(null)
+  const [image, setImage] = useState<any>(null)
   const [title, setTitle] = useState("")
   const [rating, setRating] = useState(3)
   const [imagebase64, setImagebase64] = useState<string | null>(null)
 
+  const { token } = useAuthStore()
   const handleImagePicker= async() => {
     try {
       // request permission if needed
@@ -74,7 +77,34 @@ const imageType = fileType ? `image/${fileType.toLowerCase()}` : "image/jpeg";
 
 // Create a base64 data URL using the MIME type and the actual base64 image string
 const imageDataUrl = `data:${imageType};base64,${imagebase64}`;
+
+const res = await fetch (`${API_URI}/book/register-book`, {
+      method:"POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify( {
+        image: imageDataUrl,
+        rating: rating.toString(),
+        caption,
+        title
+      })
+  })
+  const data = await res.json()
+  if(!res.ok) throw new Error(data?.message || "Failed to create book")
+    Alert.alert("Success", "Book created successfully")
+    setTitle("")
+    setCaption("")
+    setRating(3)
+    setImage(null)
+    setImagebase64(null)
+    router.push("/")
   } catch (error) {
+    console.error("Error creating book", error)
+    Alert.alert("Error", "There was a problem creating your book")
+  } finally {
+    setLoading(false)
     
   }
 }

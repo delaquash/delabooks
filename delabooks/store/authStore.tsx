@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import  AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URI } from "@/constant/app";
 
 type IUser = {
     id?: string;
@@ -25,7 +26,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     register: async (username, email, password) => {
         set({ isLoading: true });
         try {
-            const response = await fetch("https://delabooks.onrender.com/api/v1/auth/register", {
+            const response = await fetch(`${API_URI}/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -48,7 +49,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     login: async (email, password) => {
         set({ isLoading: true });
         try {
-            const res = await fetch("https://delabooks.onrender.com/api/v1/auth/login", {
+            const res = await fetch(`${API_URI}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
