@@ -1,11 +1,17 @@
-import { FlatList, StyleSheet, Text, View, Image } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { API_URI } from '@/constant/app'
 import { useAuthStore } from '@/store/authStore'
+import { Image } from 'expo-image';
+import { Ionicons } from '@expo/vector-icons';
+import COLORS from '@/constant/color';
+
 
 interface  ItemUser {
-  _id: string
-  image: string
+  _id: string;
+  rating: number;
+  image: string;
+  title: string;
     user: {
       image: string;
       username: string;
@@ -19,6 +25,7 @@ interface Book {
   image: string;
   title: string;
   description?: string;
+  rating: number;  // Added this property
   user: {
     image: string;
     username: string;
@@ -32,6 +39,7 @@ const Home = () => {
   const [pageNum, setPageNum] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const [books, setBooks] = useState<Book[]>([])
+  const [rating, setRating] = useState(3)
 
   const { token } = useAuthStore()
   const fetchBooks =async() => {
@@ -63,6 +71,25 @@ const Home = () => {
 
   }
 
+   const RenderRatePicker =(rating: number) => {
+      const starRatings = [];
+  
+        for (let i = 1; i <= 5; i++) {
+          starRatings.push(
+            // <TouchableOpacity key={i} onPress={() => setRating(i)} style={styles.starButton}>
+              <Ionicons
+                key={i}
+                name={i <= rating ? "star" : "star-outline"}  
+                size={16}
+                style={{ marginRight: 2}}
+                color={i <= rating ? "#f4b400": COLORS.textSecondary}
+            />
+            // </TouchableOpacity>
+          )
+      return starRatings
+    }
+    }
+
   const renderItem=({ item }:{item: ItemUser}) => (
     <View style={styles.bookCard}>
       <View style={styles.bookHeader}>
@@ -72,7 +99,12 @@ const Home = () => {
         </View>
       </View>
       <View style={styles.bookImageContainer}>
-        <Image style={styles.bookImage} source={{ uri:item.image }}  />
+        <Image style={styles.bookImage} source={item.image}  contentFit='cover'/>
+      </View>
+
+      <View style={styles.ratingContainer}>
+        <Text style={styles.BookTitle}>{item.title}</Text>
+        <View>{RenderRatePicker(item.rating)}</View>
       </View>
     </View>
   )
@@ -101,5 +133,8 @@ const styles = StyleSheet.create({
   avatar:{},
   username:{},
   bookImageContainer:{},
-  bookImage:{}
+  bookImage:{},
+  ratingContainer:{},
+  starButton:{},
+  BookTitle:{},
 })
