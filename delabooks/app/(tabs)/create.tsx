@@ -10,10 +10,10 @@ const Create = () => {
   const router = useRouter();
   const [laoding, setLaoding] = useState(false)
   const [caption, setCaption] = useState("");
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState<string|null>(null)
   const [title, setTitle] = useState("")
   const [rating, setRating] = useState(3)
-  const [imagebase64, setImagebase64] = useState(null)
+  const [imagebase64, setImagebase64] = useState<string | null>(null)
 
   const handleImagePicker= async() => {
     try {
@@ -35,6 +35,16 @@ const Create = () => {
         quality: 0.5,
         base64: true
       })
+      if(!result.canceled){
+        setImage(result.assets[0].uri)
+
+        // if base64 is available
+        if(result.assets[0].base64){
+          setImagebase64(result.assets[0].base64)
+        } else {
+          // if base64 is not available, convert to base 64
+        }
+      }
     } catch (error) {
       
     }
