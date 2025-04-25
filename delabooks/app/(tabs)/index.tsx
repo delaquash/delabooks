@@ -8,6 +8,7 @@ import COLORS from '@/constant/color';
 
 
 interface  ItemUser {
+  caption: string;
   _id: string;
   rating: number;
   image: string;
@@ -22,6 +23,7 @@ interface  ItemUser {
 
 interface Book {
   _id: string;
+  caption: string;
   image: string;
   title: string;
   description?: string;
@@ -105,6 +107,7 @@ const Home = () => {
       <View style={styles.bookDetails}>
         <Text style={styles.BookTitle}>{item.title}</Text>
         <View style={styles.ratingContainer}>{RenderRatePicker(item.rating)}</View>
+        <Text style={styles.caption}>{item.caption}</Text>
       </View>
     </View>
   )
@@ -137,5 +140,6 @@ const styles = StyleSheet.create({
   ratingContainer:{},
   starButton:{},
   BookTitle:{},
-  bookDetails:{}
+  bookDetails:{},
+  caption:{}
 })
