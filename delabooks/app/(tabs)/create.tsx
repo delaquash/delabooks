@@ -55,7 +55,17 @@ const Create = () => {
       Alert.alert("Error", "There was a problem selecting your image")
     }
   }
-const handleSubmit= () => {}
+const handleSubmit= async() => {
+  if(!title || !caption || !image || !rating){
+    Alert.alert("Error", "Please fill all fields")
+    return;
+  }
+  try {
+    setLoading(true)
+  } catch (error) {
+    
+  }
+}
   const RenderRatePicker =() => {
     const starRatings = [];
 
