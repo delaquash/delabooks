@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system'
 
 const Create = () => {
   const router = useRouter();
@@ -43,6 +44,10 @@ const Create = () => {
           setImagebase64(result.assets[0].base64)
         } else {
           // if base64 is not available, convert to base 64
+          const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, { 
+            encoding: FileSystem.EncodingType.Base64 
+          });
+          setImage(base64)
         }
       }
     } catch (error) {
