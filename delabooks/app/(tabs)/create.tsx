@@ -61,7 +61,19 @@ const handleSubmit= async() => {
     return;
   }
   try {
-    setLoading(true)
+    setLoading(true);
+    // get the file extension
+// Split the image URI (e.g., 'photo.png') into parts using '.' as the separator
+const uriParts = image.split(".");
+
+// Get the last part of the array, which should be the file extension (e.g., 'png', 'jpg')
+const fileType = uriParts[uriParts.length - 1];
+
+// Construct the image MIME type, defaulting to 'image/jpeg' if fileType is falsy
+const imageType = fileType ? `image/${fileType.toLowerCase()}` : "image/jpeg";
+
+// Create a base64 data URL using the MIME type and the actual base64 image string
+const imageDataUrl = `data:${imageType};base64,${imagebase64}`;
   } catch (error) {
     
   }
