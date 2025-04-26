@@ -6,6 +6,7 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
 import { formatPublishDate } from '@/lib/utils';
+import Loader from '@/component/Loader';
 
 
 interface  ItemUser {
@@ -135,6 +136,8 @@ const Home = () => {
         await fetchBooks(pageNum + 1)
     }
   }
+
+  if(loading) return <Loader />
 
   return (
     <View style={styles.container}>
