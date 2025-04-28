@@ -15,13 +15,13 @@ const Profile = () => {
   const [book, setBook] = useState([])
   const [refreshing, setRefreshing] = useState(false)
 
-  const { token } = useAuthStore()
-
-  const fetchData = async (id: any) => {
+  const { token, user } = useAuthStore()
+  const userId = user?.id
+  const fetchData = async (userId: string) => {
     
     try {
       setisLoading(true)
-      const res = await fetch (`${API_URI}/book/user/${id}`, {
+      const res = await fetch (`${API_URI}/book/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -37,28 +37,27 @@ const Profile = () => {
     }
   }
 
-  useEffect((id)=> {
-    fetchData(id)
-  }, [])
+  useEffect(() => {
+    if (userId) fetchData(userId);
+  }, [userId]);
 
-  const RenderRatePicker =(rating: number) => {
-        const starRatings = [];
+  const RenderRatePicker = (rating: number) => {
+    const starRatings = [];
     
-          for (let i = 1; i <= 5; i++) {
-            starRatings.push(
-              // <TouchableOpacity key={i} onPress={() => setRating(i)} style={styles.starButton}>
-                <Ionicons
-                  key={i}
-                  name={i <= rating ? "star" : "star-outline"}  
-                  size={16}
-                  style={{ marginRight: 2}}
-                  color={i <= rating ? "#f4b400": COLORS.textSecondary}
-              />
-              // </TouchableOpacity>
-            )
-        return starRatings
-      }
-  }
+    for (let i = 1; i <= 5; i++) {
+      starRatings.push(
+        <Ionicons
+          key={i}
+          name={i <= rating ? "star" : "star-outline"}  
+          size={16}
+          style={{ marginRight: 2 }}
+          color={i <= rating ? "#f4b400" : COLORS.textSecondary}
+        />
+      );
+    }
+    
+    return starRatings;
+  };
 
   const renderItem = (item :any )=> (
     <View style={styles.bookItemList}>
