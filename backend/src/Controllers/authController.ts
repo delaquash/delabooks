@@ -68,6 +68,7 @@ import { IUSER } from '../types/types';
                 username: newUser.username,
                 email: newUser.email,
                 profileImage: newUser.profileImage,
+                createdAt: newUser.createdAt
             },
             message: 'User created successfully'});
     } catch (error) {
@@ -105,6 +106,7 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         profileImage: user.profileImage,
+        createdAt: user.createdAt
       },
       message: 'User logged in successfully'
     })

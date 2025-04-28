@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { API_URI } from '@/constant/app'
 import { useAuthStore } from '@/store/authStore'
@@ -147,7 +147,14 @@ const Home = () => {
         keyExtractor={(item)=> item._id}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing}
+            onRefresh={()=> fetchBooks(1, true)}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListHeaderComponent={

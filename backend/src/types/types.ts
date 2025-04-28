@@ -16,6 +16,7 @@ export interface IUSER {
   email: string;
   profileImage: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  createdAt: Date;
 }
 
 export interface IUserRequest extends Request {

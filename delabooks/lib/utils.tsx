@@ -1,5 +1,5 @@
 // this function will convert the createdAt to this format:  "May 2023"
-export function formatMemberSince(dateString: string) {
+export function formatMemberSince(dateString:  any) {
     const date = new Date(dateString)
     const month = date.toLocaleString("default", { month: "short"});
     const year = date.getFullYear()

@@ -4,9 +4,10 @@ import { API_URI } from "@/constant/app";
 
 type IUser = {
     id?: string;
-    username: string;
+    username?: string;
     email: string;
     profileImage: string;
+    createdAt: Date ;
 }
 
 type AuthState = {
