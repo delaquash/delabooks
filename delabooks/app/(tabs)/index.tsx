@@ -7,37 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import COLORS from '@/constant/color';
 import { formatPublishDate } from '@/lib/utils';
 import Loader from '@/component/Loader';
-
-
-interface  ItemUser {
-  caption: string;
-  createdAt: string;
-  _id: string;
-  rating: number;
-  image: string;
-  title: string;
-    user: {
-      image: string;
-      username: string;
-      user: string;
-
-  }
-}
-
-interface Book {
-  _id: string;
-  caption: string;
-  createdAt: string;
-  image: string;
-  title: string;
-  description?: string;
-  rating: number;  // Added this property
-  user: {
-    image: string;
-    username: string;
-    user: string;
-  };
-}
+import { Book, ItemUser } from '@/global';
 
 const Home = () => {
   const [loading, setLoading] = useState(true)
@@ -46,6 +16,7 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true)
   const [books, setBooks] = useState<Book[]>([])
   const [rating, setRating] = useState(3)
+  const [bookId, setBookId] = useState<string | null>(null)
 
   const { token } = useAuthStore()
   const fetchBooks =async(pageNum=1, refreshing=false) => {
@@ -119,6 +90,7 @@ const Home = () => {
 
   const handleDeleteConfirm = async(bookId: string) => {
     try {
+      setBookId(bookId)
       const res = await fetch(`${API_URI}/book/delete-book/${bookId}`, {
         method: "DELETE",
         headers: {
@@ -134,6 +106,8 @@ const Home = () => {
       console.log("Error deleting book", error)
       Alert.alert("Error:", error.message || "Failed to delete book")
       
+    } finally {
+      setBookId(null)
     }
   }
 
