@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { API_URI } from '@/constant/app'
 import { useAuthStore } from '@/store/authStore'
@@ -108,7 +108,34 @@ const Home = () => {
           )
       return starRatings
     }
+  }
+
+  const handleDelete = async(bookId: string) => {
+    Alert.alert("Delete Book", "Are you sure you want to delete this book?", [
+      { text: "Cancel", style: "cancel" },
+      { text: "Delete", onPress: () => handleDeleteConfirm(bookId), style: "destructive" }
+    ])
+  }
+
+  const handleDeleteConfirm = async(bookId: string) => {
+    try {
+      const res = await fetch(`${API_URI}/book/delete-book/${bookId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      })
+      const data = await res.json()
+      if(!res.ok) throw new Error(data.message || "Fail to delete book")
+        setBooks(books.filter((book)=> book._id !== bookId))
+      Alert.alert("Success", "Book deleted successfully")
+    } catch (error: any) {
+      console.log("Error deleting book", error)
+      Alert.alert("Error:", error.message || "Failed to delete book")
+      
     }
+  }
 
   const renderItem=({ item }:{item: ItemUser}) => (
     <View style={styles.bookCard}>
@@ -128,6 +155,9 @@ const Home = () => {
         <Text style={styles.caption}>{item.caption}</Text>
         <Text style={styles.date}>{formatPublishDate(item.createdAt)}</Text>
       </View>
+      <TouchableOpacity style={styles.deleteButton} onPress={()=> handleDelete(item._id)}>
+        <Ionicons name="trash-outline" size={24} color={COLORS.primary}/>
+      </TouchableOpacity>
     </View>
   )
 
@@ -211,5 +241,6 @@ const styles = StyleSheet.create({
   emptyContainer:{},
   emptyText:{},
   emptySubText: {},
-  footerLoader:{}
+  footerLoader:{},
+  deleteButton:{}
 })
