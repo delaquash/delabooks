@@ -76,7 +76,7 @@ import {
   
           <View>
             <TouchableOpacity onPress={handlePush}>
-              <Ionicons name="arrow-forward-outline" size={30} color={COLORS.primary} />
+              <Ionicons name="arrow-forward-outline" size={30} color="blue" style={{ left : '50%'}} />
             </TouchableOpacity>
           </View>
         </View>

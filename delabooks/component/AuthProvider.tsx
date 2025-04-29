@@ -42,8 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } else if (!user || !token) {
       // Onboarded but not logged in → GetStarted screen
-      if (currentScreen !== "getstarted") {
-        router.replace("/(onboarding)/getstarted");
+      if (currentScreen !== "GetStarted") {
+        router.push("/(onboarding)/GetStarted");
       }
     } else {
       // Authenticated → Tabs screen
