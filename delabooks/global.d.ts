@@ -23,6 +23,7 @@ export interface  ItemUser {
     description?: string;
     rating: number;  // Added this property
     user: {
+      _id: string;
       image: string;
       username: string;
       user: string;

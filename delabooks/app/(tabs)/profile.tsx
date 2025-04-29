@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, FlatList, Image, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react';
 // @ts-ignore
 import { useRouter } from "expo-router";
@@ -14,7 +14,6 @@ import { formatPublishDate } from '@/lib/utils';
 const Profile = () => {
   const router = useRouter()
   const [isLoading, setisLoading] = useState(true)
-  // const [book, setBook] = useState([])
   const [refreshing, setRefreshing] = useState(false)
     const [books, setBooks] = useState<Book[]>([])
     const [deleteBookId, setDeleteBookId] = useState<string | null>(null)
@@ -93,7 +92,21 @@ const Profile = () => {
       }
     }
   
-
+    const handleRefresh = async () => {
+      setRefreshing(true);
+      try {
+        if (!userId) {
+          Alert.alert("Error", "User not found. Please login again.");
+          return;
+        }
+        await fetchData(userId);
+      } catch (error) {
+        console.error("Error refreshing data:", error);
+        Alert.alert("Error", "Failed to refresh data");
+      } finally {
+        setRefreshing(false);
+      }
+    };
   const renderItem = (item :any )=> (
     <View style={styles.bookItemList}>
       <Image style={styles.bookImage} source={ item.image }/>
@@ -102,7 +115,6 @@ const Profile = () => {
         <View style={styles.ratingContainer}>{RenderRatePicker(item.rating)}</View>
         <Text style={styles.bookCaption} numberOfLines={3}>{item.caption}</Text>
         <Text style={styles.date}>{formatPublishDate(item.createdAt)}</Text>
-        {/* <Text style={}></Text> */}
       </View>
         <TouchableOpacity style={styles.deleteButton} onPress={()=> handleDelete(item._id)}>
               {deleteBookId === item._id ? (
@@ -133,6 +145,14 @@ const Profile = () => {
         keyExtractor={( item ) => item?._id }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.bookList}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="book-outline" size={50} color={COLORS.textSecondary} />
