@@ -14,7 +14,7 @@ import { formatPublishDate } from '@/lib/utils';
 const Profile = () => {
   const router = useRouter()
   const [isLoading, setisLoading] = useState(true)
-  const [book, setBook] = useState([])
+  // const [book, setBook] = useState([])
   const [refreshing, setRefreshing] = useState(false)
     const [books, setBooks] = useState<Book[]>([])
     const [deleteBookId, setDeleteBookId] = useState<string | null>(null)
@@ -32,7 +32,7 @@ const Profile = () => {
       })
       const data = await res.json()
       if(!res.ok) throw new Error(data?.message || "Failed to fetch book")
-      setBook(data)
+      setBooks(data)
     } catch (error) {
       console.error("Error in fetching books", error)
       Alert.alert("Error", "Failed to load books. Pull down to refresh.")
@@ -124,11 +124,11 @@ const Profile = () => {
       {/* Your Recommendations */}
       <View style={styles.bookHeader}>
         <Text style={styles.bookTitle}>Your Recommendations</Text>
-        <Text style={styles.bookCount}>{book.length} books</Text>
+        <Text style={styles.bookCount}>{books.length} books</Text>
       </View>
 
       <FlatList 
-        data={book}
+        data={books}
         renderItem={renderItem}
         keyExtractor={( item ) => item?._id }
         showsVerticalScrollIndicator={false}
