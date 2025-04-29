@@ -16,7 +16,7 @@ const Home = () => {
   const [hasMore, setHasMore] = useState(true)
   const [books, setBooks] = useState<Book[]>([])
   const [rating, setRating] = useState(3)
-  const [bookId, setBookId] = useState<string | null>(null)
+
 
   const { token } = useAuthStore()
   const fetchBooks =async(pageNum=1, refreshing=false) => {
@@ -81,35 +81,35 @@ const Home = () => {
     }
   }
 
-  const handleDelete = async(bookId: string) => {
-    Alert.alert("Delete Book", "Are you sure you want to delete this book?", [
-      { text: "Cancel", style: "cancel" },
-      { text: "Delete", onPress: () => handleDeleteConfirm(bookId), style: "destructive" }
-    ])
-  }
+  // const handleDelete = async(bookId: string) => {
+  //   Alert.alert("Delete Book", "Are you sure you want to delete this book?", [
+  //     { text: "Cancel", style: "cancel" },
+  //     { text: "Delete", onPress: () => handleDeleteConfirm(bookId), style: "destructive" }
+  //   ])
+  // }
 
-  const handleDeleteConfirm = async(bookId: string) => {
-    try {
-      setBookId(bookId)
-      const res = await fetch(`${API_URI}/book/delete-book/${bookId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
-      })
-      const data = await res.json()
-      if(!res.ok) throw new Error(data.message || "Fail to delete book")
-        setBooks(books.filter((book)=> book._id !== bookId))
-      Alert.alert("Success", "Book deleted successfully")
-    } catch (error: any) {
-      console.log("Error deleting book", error)
-      Alert.alert("Error:", error.message || "Failed to delete book")
+  // const handleDeleteConfirm = async(bookId: string) => {
+  //   try {
+  //     setDeleteBookId(bookId)
+  //     const res = await fetch(`${API_URI}/book/delete-book/${bookId}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`
+  //       }
+  //     })
+  //     const data = await res.json()
+  //     if(!res.ok) throw new Error(data.message || "Fail to delete book")
+  //       setBooks(books.filter((book)=> book._id !== bookId))
+  //     Alert.alert("Success", "Book deleted successfully")
+  //   } catch (error: any) {
+  //     console.log("Error deleting book", error)
+  //     Alert.alert("Error:", error.message || "Failed to delete book")
       
-    } finally {
-      setBookId(null)
-    }
-  }
+  //   } finally {
+  //     setDeleteBookId(null)
+  //   }
+  // }
 
   const renderItem=({ item }:{item: ItemUser}) => (
     <View style={styles.bookCard}>
@@ -127,11 +127,9 @@ const Home = () => {
         <Text style={styles.BookTitle}>{item.title}</Text>
         <View style={styles.ratingContainer}>{RenderRatePicker(item.rating)}</View>
         <Text style={styles.caption}>{item.caption}</Text>
-        <Text style={styles.date}>{formatPublishDate(item.createdAt)}</Text>
+        
       </View>
-      <TouchableOpacity style={styles.deleteButton} onPress={()=> handleDelete(item._id)}>
-        <Ionicons name="trash-outline" size={24} color={COLORS.primary}/>
-      </TouchableOpacity>
+    
     </View>
   )
 
